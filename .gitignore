@@ -1,0 +1,16 @@
+
+# Frontend
+FrontEnd/node_modules/
+FrontEnd/dist/
+
+# Backend
+BackEnd/target/
+
+# IDE files
+.idea/
+.vscode/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
