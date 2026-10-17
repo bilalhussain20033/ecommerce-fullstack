@@ -13,17 +13,18 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "https://ecommerce-fullstack-red.vercel.app",
+})
 @RequestMapping("/api")
 public class ProductController {
     @Autowired
     private ProductService service;
 
-
     @GetMapping("/products")
     public ResponseEntity<List<Product>> getAllProducts() {
         return new ResponseEntity<>(service.getAllProducts(), HttpStatus.OK);
-
 
     }
 
@@ -44,19 +45,16 @@ public class ProductController {
         try {
             System.out.println(product);
             Product product1 = service.addProduct(product, imageFile);
-            return new ResponseEntity<>(product1,HttpStatus.CREATED);
+            return new ResponseEntity<>(product1, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
 
-
-
-
     }
+
     @GetMapping("product/{productId}/image")
-    public ResponseEntity<byte[]> getImageByProductId(@PathVariable int productId){
+    public ResponseEntity<byte[]> getImageByProductId(@PathVariable int productId) {
         Product product = service.getProductById(productId);
         byte[] imageFile = product.getImageDate();
 
@@ -64,43 +62,40 @@ public class ProductController {
                 .body(imageFile);
 
     }
+
     @PutMapping("/product/{id}")
-    public ResponseEntity<String> updateProduct(@PathVariable int id,@RequestPart Product product, @RequestPart MultipartFile imageFile){
+    public ResponseEntity<String> updateProduct(@PathVariable int id, @RequestPart Product product,
+            @RequestPart MultipartFile imageFile) {
         try {
-            service.updateProduct(id,product,imageFile);
+            service.updateProduct(id, product, imageFile);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        if(product != null)
-            return new ResponseEntity<>("Updated",HttpStatus.OK);
+        if (product != null)
+            return new ResponseEntity<>("Updated", HttpStatus.OK);
         else
-            return new ResponseEntity<>("Failed to Update",HttpStatus.BAD_REQUEST);
-
+            return new ResponseEntity<>("Failed to Update", HttpStatus.BAD_REQUEST);
 
     }
+
     @DeleteMapping("/product/{id}")
-    public ResponseEntity<String> deleteProduct(@PathVariable int id){
+    public ResponseEntity<String> deleteProduct(@PathVariable int id) {
         Product product = service.getProductById(id);
-        if(product != null) {
+        if (product != null) {
             service.deleteProduct(id);
             return new ResponseEntity<>("Deleted", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Product not Found", HttpStatus.NOT_FOUND);
         }
-        else{
-            return new ResponseEntity<>("Product not Found",HttpStatus.NOT_FOUND);
-        }
-
-
-
 
     }
 
     @GetMapping("/products/search")
-    public ResponseEntity<List<Product>> searchProducts(String keyword){
-        System.out.println("searching with " +keyword);
+    public ResponseEntity<List<Product>> searchProducts(String keyword) {
+        System.out.println("searching with " + keyword);
         List<Product> products = service.searchProducts(keyword);
-        return new ResponseEntity<>(products,HttpStatus.OK);
+        return new ResponseEntity<>(products, HttpStatus.OK);
 
     }
 
 }
-

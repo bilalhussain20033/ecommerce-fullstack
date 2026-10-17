@@ -1,4 +1,5 @@
-import axios from "../axios";
+
+import API from "../axios";
 import { useState, useEffect, createContext } from "react";
 
 const AppContext = createContext({
@@ -45,7 +46,7 @@ export const AppProvider = ({ children }) => {
 
   const refreshData = async () => {
     try {
-      const response = await axios.get("/products");
+      const response = await API.get("/products");
       setData(response.data);
     } catch (error) {
       setIsError(error.message);
